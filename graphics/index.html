@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+	<style>
+		@font-face {
+        	font-family: "Metronic Pro";
+        	src: url("font/MetronicPro.ttf");
+    	}
+
+    	p {
+        	font-family: "Comic Sans Ms";
+        	color: white;
+        	margin: 0;
+        	font-size: 72px;
+        	white-space: nowrap;
+    	}
+
+    	#hidden-resizer {
+        	font-family: "Comic Sans Ms";
+    	}
+
+    	body { 
+    		margin: 0px auto; overflow: hidden;
+    	}
+
+		.bgImage {
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: -1;
+		}
+
+		#scoreContainer {
+			position: absolute;
+			top: 250px;
+			left: 835px;
+		}
+
+		#scoreContainerCenter {
+			width: 200px;
+			height: 101px;
+		}
+
+		.centered {
+			width: 1920px;
+			position: absolute;
+			left: 0;
+			text-align: center;
+		}
+
+		.smallText {
+			font-size: 40px;
+		}
+
+		#doritomode {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	</style>
+</head>
+<body>
+	<img src="img/bt-7274bg.png" id="backgroundImage" class="bgImage">
+	<img src="img/doritomode.png" id="doritomode">
+	<!--<video class="centered" style="top: -475px; transform: scale(0.17);" autoplay loop muted>
+		<source src="img/m3manim.webm" type="video/webm" />
+	</video>-->
+
+	<div style="position: absolute; top: 250px; left: 862px; width: 190px; height: 101px; text-align: left;">
+		<p id="scoreLeft">0</p>
+	</div>
+	<div style="position: absolute; top: 250px; left: 862px; width: 190px; height: 101px; text-align: right;">
+		<p id="scoreRight">0</p>
+	</div>
+	<div class="centered" style="top: 250px;z-index: -1;">
+		<img src='img/bgcapLeft.png'><img id='scoreContainerCenter' src='img/bgCenter.png'><img src='img/bgcapRight.png'>
+	</div>
+
+	<!--<div class="centered" style="top: 100px;"><p id="round"></p></div>-->
+	<div class="centered" style="top: 50px;"><p id="round"></p></div>
+	<!--<div class="centered" style="top: 190px;"><p class="smallText" id="bestOf"></p></div>-->
+	<div class="centered" style="top: 170px;"><p class="smallText" id="bestOf"></p></div>
+	
+	<div class="centered" style="top: 900px;"><p class="smallText" id="bottomCenter1">COMMENTATORS</p></div>
+	<div class="centered" style="top: 940px;"><p class="smallText" style="color: #AAFFFF;" id="caster1"></p></div>
+	<div class="centered" style="top: 980px;"><p class="smallText" style="color: #AAFFFF;" id="caster2"></p></div>
+	<div class="centered" style="top: 1020px;"><p class="smallText" style="color: #AAFFFF;" id="caster3"></p></div>
+
+	<!--<div style="position:absolute; top:900px; left: 10px; width: 500px;">
+		<p style="font-size: 44px; text-align: left;" id="playerLeftWinLossTitle">Win/Loss</p>
+	</div>
+	<div style="position:absolute; top:900px; left: 10px; width: 500px;">
+		<p style="font-size: 44px; text-align: right;" id="playerLeftWinLoss">0 - 0</p>
+	</div>
+
+	<div style="position:absolute; top:955px; left: 10px; width: 500px;">
+		<p style="font-size: 44px; text-align: left;" id="playerLeftTourneyPBTitle">Tournament PB</p>
+	</div>
+	<div style="position:absolute; top:955px; left: 10px; width: 500px;">
+		<p style="font-size: 44px; text-align: right;" id="playerLeftTourneyPB">0:00</p>
+	</div>
+
+	<div style="position:absolute; top:1010px; left: 10px; width: 500px;">
+		<p style="font-size: 44px; text-align: left;" id="playerLeftAverageTimeTitle">Average Time</p>
+	</div>
+	<div style="position:absolute; top:1010px; left: 10px; width: 500px;">
+		<p style="font-size: 44px; text-align: right;" id="playerLeftAverageTime">0:00</p>
+	</div>
+
+	<div style="position:absolute; top:900px; left: 1410px; width: 500px;">
+		<p style="font-size: 44px; text-align: left;" id="playerRightWinLoss">0 - 0</p>
+	</div>
+	<div style="position:absolute; top:900px; left: 1410px; width: 500px;">
+		<p style="font-size: 44px; text-align: right;" id="playerRightWinLossTitle">Win/Loss</p>
+	</div>
+
+	<div style="position:absolute; top:955px; left: 1410px; width: 500px;">
+		<p style="font-size: 44px; text-align: left;" id="playerRightTourneyPB">0:00</p>
+	</div>
+	<div style="position:absolute; top:955px; left: 1410px; width: 500px;">
+		<p style="font-size: 44px; text-align: right;" id="playerRightTourneyPBTitle">Tournament PB</p>
+	</div>
+
+	<div style="position:absolute; top:1010px; left: 1410px; width: 500px;">
+		<p style="font-size: 44px; text-align: left;" id="playerRightAverageTime">0:00</p>
+	</div>
+	<div style="position:absolute; top:1010px; left: 1410px; width: 500px;">
+		<p style="font-size: 44px; text-align: right;" id="playerRightAverageTimeTitle">Average Time</p>
+	</div>-->
+
+	<script>
+		nodecg.listenFor("OnevsOneUpdate", (remoteState) => {
+			if (remoteState.socketId == undefined || remoteState.socketId !== nodecg.socket.id) {
+				for (key in remoteState) {
+					if (remoteState[key] !== undefined) {
+						if (key == "playerLeft") {
+							setTextWithBackground("leftPlayer", remoteState[key], 72, 25, 250, 400)
+						} else if (key == "playerRight") {
+							setTextWithBackground("rightPlayer", remoteState[key], 72, 1920 - 60, 250, 400, true)
+						} else {
+							$("#" + key).text(remoteState[key])
+						}
+					}
+				}
+				var level = remoteState.level.replaceAll(" ", "").toLowerCase()
+				if (!$("#backgroundImage").attr("src").includes(level)) {
+					var fade = $("#backgroundImage").clone()
+					fade.attr("id", "#backgroundImageFade")
+					fade.insertAfter("#backgroundImage")
+					$("#backgroundImage").attr("src", "img/" + level + "bg.png")
+					fade.animate({
+						opacity: 0
+					}, 1000, function () {
+						fade.remove()
+					})
+				}
+			}
+		})
+		function setTextWithBackground(id, text, size, posX, posY, widthLimit, alignRight) {
+			$("#" + id + "Container").remove()
+			$(document.body).append("<div id='" + id + "Container'><p id='" + id + "Text'>" + text + "</p><img src='img/bgcapLeft.png'><img id='" + id + "BgCenter' src='img/bgCenter.png'><img src='img/bgcapRight.png'></div>")
+			$("#" + id + "Container").css({
+				position: 'absolute',
+				top: posY,
+				left: posX,
+			})
+			$("#" + id + "Text").css({
+				fontSize: size + 'px',
+				transform: 'translateX(25px)',
+				lineHeight: '101px',
+				position: 'fixed'
+			})
+
+			while ($("#" + id + "Text").width() > widthLimit) {
+				$("#" + id + "Text").css("font-size", parseInt($("#" + id + "Text").css("font-size")) - 1)
+			}
+
+			$("#" + id + "BgCenter").css("height", 101)
+			$("#" + id + "BgCenter").css("width", $("#" + id + "Text").width() + 20)
+			if (alignRight) {
+				$("#" + id + "Container").css("left", posX - $("#" + id + "Container").width())
+			}
+		}
+		$(document).ready(function() {
+			$('<div />', {id: 'hidden-resizer'}).hide().appendTo(document.body);
+			nodecg.sendMessage("OnevsOneStateRequest")
+		})
+	</script>
+</body>
+</html>

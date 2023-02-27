@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+	<style>
+		@font-face {
+        	font-family: "Metronic Pro";
+        	src: url("font/MetronicPro.ttf");
+    	}
+
+		p {
+        	font-family: "Metronic Pro";
+			margin: 0;
+		}
+
+		#scoreLeft {
+			width: 30px;
+		}
+
+		#scoreRight {
+			width: 30px;
+		}
+
+		input {
+			margin-bottom: 10px;
+			width: 250px;
+        	font-family: "Metronic Pro";
+        	font-size: 20px;
+		}
+
+		select {
+			margin-bottom: 10px;
+			width: 250px;
+        	font-family: "Metronic Pro";
+        	font-size: 20px;
+		}
+
+		button {
+        	font-family: "Metronic Pro";
+        	font-size: 20px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<p>PLAYERS</p>
+	<input tabindex="1" id="playerLeft" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<button tabindex="-1" onclick="modifyIntegerValue('scoreLeft', -1)">-</button>
+	<input tabindex="3" id="scoreLeft" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<button tabindex="-1" onclick="modifyIntegerValue('scoreLeft', 1)">+</button>
+	<br>
+	<input tabindex="2" id="playerRight" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<button tabindex="-1" onclick="modifyIntegerValue('scoreRight', -1)">-</button>
+	<input tabindex="4" id="scoreRight" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<button tabindex="-1" onclick="modifyIntegerValue('scoreRight', 1)">+</button>
+	<br>
+	<button tabindex="-1" onclick="flipPlayers()">Flip Players</button>
+	<button tabindex="-1" onclick="resetPlayers()">Reset</button>
+	<p>GAME</p>
+	<input id="round" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<input id="bestOf" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<select id="level" onchange="updateLevel()">
+		<option value="BT-7274">BT-7274</option>
+		<option value="Blood and Rust">Blood and Rust</option>
+		<option value="Into the Abyss 1">Abyss 1</option>
+		<option value="Into the Abyss 3">Abyss 3</option>
+		<option value="Effect and Cause 2">Effect and Cause 2</option>
+		<option value="Effect and Cause 3">Effect and Cause 3</option>
+		<option value="The Beacon 2">Beacon 2</option>
+		<option value="The Beacon 3">Beacon 3</option>
+		<option value="Trial by Fire">Trial by Fire</option>
+		<option value="The Ark">The Ark</option>
+		<option value="The Fold Weapon">The Fold Weapon</option>
+	</select>
+	<p>CASTERS</p>
+	<input id="caster1" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<input id="caster2" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<input id="caster3" type="text" autocomplete="off" oninput="updateModifiedColors()">
+	<p>DATA</p>
+	<p id="playerLeftWinLoss"></p>
+	<p id="playerLeftTourneyPB"></p>
+	<p id="playerLeftAverageTime"></p>
+	<p id="playerRightWinLoss"></p>
+	<p id="playerRightTourneyPB"></p>
+	<p id="playerRightAverageTime"></p>
+
+	<script>
+		$(document).ready(function() {
+			nodecg.sendMessage("OnevsOneStateRequest")
+		})
+		var stateCache = {}
+		nodecg.listenFor("OnevsOneUpdate", (remoteState) => {
+			if (remoteState.socketId == undefined || remoteState.socketId !== nodecg.socket.id) {
+				for (key in remoteState) {
+					if (remoteState[key] !== undefined) {
+						var isModified = stateCache[key] !== undefined && $("#" + key).val() != stateCache[key]
+						stateCache[key] = remoteState[key]
+						if (!isModified) {
+							var element = $("#" + key)
+							if (element.is("input")) element.val(remoteState[key])
+							if (element.is("p")) element.text(remoteState[key])
+						}
+					}
+				}
+				updateModifiedColors()
+			}
+		})
+		function flipPlayers() {
+			nodecg.sendMessage("UpdateOnevsOneData", {
+				playerLeft: $("#playerRight").val(),
+				playerRight: $("#playerLeft").val(),
+				scoreLeft: $("#scoreRight").val(),
+				scoreRight: $("#scoreLeft").val()
+			})
+		}
+		function resetPlayers() {
+			nodecg.sendMessage("UpdateOnevsOneData", {
+				playerLeft: "",
+				playerRight: "",
+				scoreLeft: 0,
+				scoreRight: 0
+			})
+		}
+		function modifyIntegerValue(id, diff) {
+			var modifiedValue = parseInt($('#' + id).val()) + diff
+			$('#' + id).val(modifiedValue)
+			nodecg.sendMessage("UpdateOnevsOneData", {[id]: modifiedValue})
+		}
+		function updateModifiedColors() {
+			$("input").each(function (index) {
+				var cacheValue = stateCache[$(this).attr("id")]
+				if (cacheValue !== undefined && cacheValue != $(this).val()) {
+					$(this).css("color", "deeppink")
+				} else {
+					$(this).css("color", "black")
+				}
+			})
+		}
+		function updateLevel() {
+			nodecg.sendMessage("UpdateOnevsOneData", {level: $("#level").val()})
+		}
+		function updateState() {
+			var update = {}
+			$("input").each(function (index) {
+				update[$(this).attr("id")] = $(this).val()
+				stateCache[$(this).attr("id")] = $(this).val()
+			})
+			nodecg.sendMessage("UpdateOnevsOneData", update)
+			updateModifiedColors()
+		}
+		$("input").on("keypress", function(e) {
+			if (e.which == 13) {
+				updateState()
+			}
+		})
+		document.onkeydown = function(evt) {
+			if (evt.key == "Escape") {
+				var focused = $(":focus")
+				focused.val(stateCache[focused.attr("id")])
+				updateModifiedColors()
+			}
+		}
+	</script>
+</body>
+</html>
