@@ -10,7 +10,7 @@
     	}
 
     	p {
-        	font-family: "Comic Sans Ms";
+        	font-family: "Metronic Pro";
         	color: white;
         	margin: 0;
         	font-size: 72px;
@@ -18,7 +18,7 @@
     	}
 
     	#hidden-resizer {
-        	font-family: "Comic Sans Ms";
+        	font-family: "Metronic Pro";
     	}
 
     	body { 
@@ -53,20 +53,13 @@
 		.smallText {
 			font-size: 40px;
 		}
-
-		#doritomode {
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
 	</style>
 </head>
 <body>
 	<img src="img/bt-7274bg.png" id="backgroundImage" class="bgImage">
-	<img src="img/doritomode.png" id="doritomode">
-	<!--<video class="centered" style="top: -475px; transform: scale(0.17);" autoplay loop muted>
+	<video class="centered" style="top: -475px; transform: scale(0.17);" autoplay loop muted>
 		<source src="img/m3manim.webm" type="video/webm" />
-	</video>-->
+	</video>
 
 	<div style="position: absolute; top: 250px; left: 862px; width: 190px; height: 101px; text-align: left;">
 		<p id="scoreLeft">0</p>
@@ -78,17 +71,15 @@
 		<img src='img/bgcapLeft.png'><img id='scoreContainerCenter' src='img/bgCenter.png'><img src='img/bgcapRight.png'>
 	</div>
 
-	<!--<div class="centered" style="top: 100px;"><p id="round"></p></div>-->
-	<div class="centered" style="top: 50px;"><p id="round"></p></div>
-	<!--<div class="centered" style="top: 190px;"><p class="smallText" id="bestOf"></p></div>-->
-	<div class="centered" style="top: 170px;"><p class="smallText" id="bestOf"></p></div>
+	<div class="centered" style="top: 100px;"><p id="round"></p></div>
+	<div class="centered" style="top: 190px;"><p class="smallText" id="bestOf"></p></div>
 	
 	<div class="centered" style="top: 900px;"><p class="smallText" id="bottomCenter1">COMMENTATORS</p></div>
 	<div class="centered" style="top: 940px;"><p class="smallText" style="color: #AAFFFF;" id="caster1"></p></div>
 	<div class="centered" style="top: 980px;"><p class="smallText" style="color: #AAFFFF;" id="caster2"></p></div>
 	<div class="centered" style="top: 1020px;"><p class="smallText" style="color: #AAFFFF;" id="caster3"></p></div>
 
-	<!--<div style="position:absolute; top:900px; left: 10px; width: 500px;">
+	<div style="position:absolute; top:900px; left: 10px; width: 500px;">
 		<p style="font-size: 44px; text-align: left;" id="playerLeftWinLossTitle">Win/Loss</p>
 	</div>
 	<div style="position:absolute; top:900px; left: 10px; width: 500px;">
@@ -128,7 +119,7 @@
 	</div>
 	<div style="position:absolute; top:1010px; left: 1410px; width: 500px;">
 		<p style="font-size: 44px; text-align: right;" id="playerRightAverageTimeTitle">Average Time</p>
-	</div>-->
+	</div>
 
 	<script>
 		nodecg.listenFor("OnevsOneUpdate", (remoteState) => {
